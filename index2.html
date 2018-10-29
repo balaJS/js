@@ -9,8 +9,8 @@ $(document).ready(function() {
     var content1 = $($("[name='used_template']").val());
     var content2 = $($("[name='un_used_template']").val());
     
-    var target1 = [];
-    var target2 = [];
+    var target1 = []; var target2 = [];
+    var td_elem1 = {}; var td_elem2 = {};
 
     var markup_arr = {
       'u_t_length': 'Used template input field count',
@@ -24,11 +24,15 @@ $(document).ready(function() {
     };
     
     content1.children("tr").each(function(i, elem) {
-      target1.push($(elem).children("td").eq(0).html());
+      td_elem1 = $(elem).children("td").eq(0);
+      td_elem1.children().remove();
+      target1.push(td_elem1.text());
     });
 
     content2.children("tr").each(function(i, elem) {
-      target2.push($(elem).children("td").eq(0).html());
+      td_elem2 = $(elem).children("td").eq(0);
+      td_elem2.children().remove();
+      target2.push(td_elem2.text());
     });
     
     var output = calculation(target1, target2);
