@@ -11,7 +11,7 @@
         {
             "matches": ["*://*.mozilla.org/*"],
             "js": [
-                "content_scripts/js/app.js",
+                "content_scripts/js/app2.js",
                 "content_scripts/js/jquery.min.js",
                 "content_scripts/js/popper.min.js",
                 "content_scripts/js/bootstrap.min.js"
