@@ -68,6 +68,9 @@
     .result-table tr td button {
       margin: 10px 10px 5px 0px;
     }
+    .search-box {
+      float: right;
+    }
   </style>
 </head>
 <body>
@@ -84,11 +87,11 @@
         <a class="nav-link" data-toggle="tab" href="#menu1">ADD</a>
       </li>
     </ul>
-
-      <!-- Tab panes -->
+    <input type="text" class="search-box js-search-box"  name="search_box"/>
+  <!-- Tab panes -->
   <div class="tab-content">
+      <!-- Result table start -->
       <div id="home" class="container tab-pane active"><br>
-        <!-- Result table start -->
         <div class="col-md-12 list-section js-list-section">
             <form class="edit-form">
             <table class="result-table js-result-table">
@@ -104,10 +107,10 @@
             </table>
           </form>
           </div>
-        <!-- Result table end -->
       </div>
+      <!-- Result table end -->
+      <!-- ADD section start -->
       <div id="menu1" class="container tab-pane fade"><br>
-        <!-- ADD section start -->
         <div class="col-md-12 js-add-form-section">
             <form class="js-add-form">
             <h3>ADD url suffix</h3>
@@ -129,9 +132,12 @@
             </div>
           </form>
           </div>
-        <!-- ADD section end -->
       </div>
-</div>
+      <!-- ADD section end -->
+      <!-- Next section start -->
+
+      <!-- Next section end -->
+  </div>
 
 </body>
 </html>

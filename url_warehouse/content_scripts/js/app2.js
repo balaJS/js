@@ -114,6 +114,20 @@ const url_warehouse =  {
 
         $active_update_btn.addClass('js-edit-btn').removeClass('js-update-btn').attr('title', 'Edit button').html('<i class="fas fa-edit"></i>');
     },
+    _filter: function(keyword) {
+        var regex, name_value, $tr, result;
+
+        regex = new RegExp(keyword, 'gi');
+        url_warehouse.$tbody.find('tr').each(function(index, tr) {
+            $tr = $(tr).addClass('hidden');
+            name_value = $tr.find('td').eq(1).find('a').html();
+
+            result = name_value.search(regex);
+            if (result !== -1) {
+                $tr.removeClass('hidden');
+            }
+        });
+    },
 };
 url_warehouse._get_url(url_warehouse._get_domain);
 
@@ -180,6 +194,10 @@ $(document).ready(function() {
         };
         url_warehouse._set_source(this_data);
         url_warehouse._render_updated_record($active_update_btn, alpha_index);
+    });
+
+    $('.js-search-box', '.container').on('keyup', function() {
+        url_warehouse._filter(this.value);
     });
 
 });
