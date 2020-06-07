@@ -2,9 +2,10 @@
 <html>
 <head>
 <title>App - Url warhouse</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js -->
+<meta charset="UTF-8">
+<script src="jquery.min.js"></script>
 <script src="app.js"></script>
-<script src="popup.js"></script>
 <link rel="stylesheet" href="app.css" />
 </head>
 <body id="app" class="app">
@@ -21,11 +22,11 @@
     </div>
     <div class="app__view__wrapper js-app__pages js-app__view__wrapper">
         <div class="app__main js-app__main container internal-url-wrapper">
-            <div class="url_heading js-url_heading hidden">Dynamic URLS</div>
+            <div class="url_heading js-url_heading hidden">Dynamic URLS <a href="#" class="help-icon" title="Based on your current domain, the given url path append with domain name. EX: test/test.html append with domain be like https://stackoverflow.com/test/test.html">❓</a></div>
         </div>
     
         <div class="app__main js-app__main container external-url-wrapper">
-            <div class="url_heading js-url_heading hidden">Static(External) URLS</div>
+            <div class="url_heading js-url_heading hidden">Static(External) URLS <a href="#" class="help-icon" title="It is just a given url, EX, https://stackoverflow.com">❓</a></div>
         </div>
     </div>
 
@@ -97,11 +98,11 @@
             </div>
         </div>
         <div class="app__main js-app__main container internal-url-wrapper">
-            <div class="url_heading js-url_heading hidden">Dynamic URLS</div>
+            <div class="url_heading js-url_heading hidden">Dynamic URLS <a href="#" class="help-icon" title="Based on your current domain, the given url path append with domain name. EX: test/test.html append with domain be like https://stackoverflow.com/test/test.html">❓</a></div>
         </div>
     
         <div class="app__main js-app__main container external-url-wrapper">
-            <div class="url_heading js-url_heading hidden">Static(External) URLS</div>
+            <div class="url_heading js-url_heading hidden">Static(External) URLS <a href="#" class="help-icon" title="It is just a given url, EX, https://stackoverflow.com">❓</a></div>
         </div>
 
         <div class="row edit-wrapper js-edit-wrapper hidden" data-action="add" data-position="">

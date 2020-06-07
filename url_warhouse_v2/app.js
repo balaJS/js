@@ -46,6 +46,7 @@ var APP = {
 
         const view = {};
         view.$wrapper = $('.js-app__view__wrapper', common.$app);
+        view.$url_box_wrapper = $('.js-app__main', view.$wrapper);
         this.elems.view = view;
 
         const settings = {};
@@ -130,7 +131,7 @@ var APP = {
                 if (!APP.elems.common.$not_found_wrapper.hasClass('hidden')) APP.elems.common.$not_found_wrapper.addClass('hidden');
 
                 $url_boxes.each(function(i, url_box) {
-                    if (!url_box.innerHTML.match(search_term)) {
+                    if (!url_box.innerHTML.match(new RegExp(search_term, 'gi'))) {
                         url_box.className += ' hidden';
                     }
                 });
@@ -183,8 +184,14 @@ var APP = {
             },
         },
         view: {
-            urlBoxClick: function() {
+            urlBoxClick: function(evt) {
                 // TODO: Should be removed in future.
+                evt.preventDefault();
+                const $url_box = APP.events.common.get_this(evt);
+                const href = $url_box.attr('href');
+                let is_external = !!href.match(/^http|https/ig);
+                let new_url = is_external ? href : APP.current.url + '/' + href;
+                chrome.tabs.create({ url: new_url });
             },
         },
         settings: {
@@ -281,6 +288,7 @@ var APP = {
         this.elems.settings.$tools_wrapper.find('.js-tool-export').on('click', this.backend.export);
 
         this.elems.settings.$url_box_wrapper.on('click', '.js-url_box', this.events.settings.urlBoxClick);
+        this.elems.view.$url_box_wrapper.on('click', '.js-url_box', this.events.view.urlBoxClick);
 
         // Default triggers.
         this.elems.common.$nav_btn.trigger('click');
@@ -374,7 +382,7 @@ var APP = {
 
             let key;
             APP.current.overall.forEach(function(entry) {
-                key = entry.is_external ? 'dynamic' : 'static';
+                key = entry.is_external ? 'static' : 'dynamic';
                 APP.current.data[key].push(entry);
             });
         },
@@ -419,5 +427,9 @@ var APP = {
     $(function() {
         APP.elemInit();
         APP.eventInit();
+        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+            const url_obj = new URL(tabs[0].url);
+            APP.current.url = url_obj.origin;
+        });
     });
 })(APP, jQuery);
