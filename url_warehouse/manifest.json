@@ -1,0 +1,35 @@
+{
+    "description": "Transform url path based on currently opend tab",
+    "manifest_version": 2,
+    "name": "Url warehouse",
+    "version": "1.1",
+    "homepage_url": "https://github.com/balaJS/js",
+    "icons": {
+        "48": "icons/icon-1.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://*.mozilla.org/*"],
+            "js": [
+                "content_scripts/js/app2.js",
+                "content_scripts/js/jquery.min.js",
+                "content_scripts/js/popper.min.js",
+                "content_scripts/js/bootstrap.min.js"
+            ],
+            "css": [
+                "content_scripts/css/bootstrap.min.css"
+            ]
+        }
+    ],
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "contextMenus",
+        "storage"
+    ],
+    "browser_action": {
+        "default_icon": "icons/icon-1.png",
+        "default_title": "Url custamization",
+        "default_popup": "popup/input.html"
+    }
+}
