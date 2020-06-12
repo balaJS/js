@@ -28,12 +28,12 @@
 }
 
 .col-md-4 {
-    width: 23%;
+    width: 18%;
     display: inline-block;
     text-align: center;
     border: 2px solid darkgrey;
-    height: 40px;
-    padding: 15px 0 0;
+    height: 30px;
+    padding: 5px 0 0;
     white-space: nowrap;
     overflow-x: hidden;
     border-radius: 5px;

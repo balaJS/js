@@ -1,0 +1,121 @@
+/* Common css styles started HERE */
+.inline-block {
+    display: inline-block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.error {
+    color: red;
+}
+
+.app {
+    width: 550px;
+    padding: 15px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.container {
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    padding: 15px 0 0;
+}
+
+.col-md-4 {
+    width: 18%;
+    display: inline-block;
+    text-align: center;
+    border: 2px solid darkgrey;
+    height: 30px;
+    padding: 5px 0 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    border-radius: 5px;
+    background-color: antiquewhite;
+    color: #252222;
+}
+
+.col-md-4:hover {
+    background-color: #d8c9b6;
+}
+
+.action-row, .form-wrapper, .edit-wrapper {
+    padding: 5px;
+    background-color: antiquewhite;
+    margin-top: -4px;
+}
+
+.actioning {
+    border-bottom: 0px;
+    background-color: antiquewhite;
+}
+
+.app__search__wrapper {
+    background-color: lightgray;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.search_box, .search_box:hover {
+    border-radius: 12px;
+}
+
+.nav-action {
+    padding: 5px;
+    position: relative;
+    top: 10px;
+    border-radius: 5px;
+}
+
+.nav-action:hover {
+    background-color: white;
+}
+
+/* Common css styles end HERE */
+
+/* view page css styles start HERE */
+.settings_wrapper {
+    position: absolute;
+    right: 60px;
+}
+
+.empty_search_box {
+    width: 35%;
+    visibility: hidden;
+}
+
+.url_heading {
+    text-align: center;
+    padding: 10px 0 0;
+    font-weight: bold;
+}
+/* view page css styles end HERE */
+
+/* settings page css styles start HERE */
+.form-wrapper > div, .edit-wrapper > div {
+    padding: 5px 0 0;
+}
+
+.action__btn_wrapper .btns {
+    padding: 5px;
+    width: 20%;
+    overflow-y: hidden;
+    height: 15px;
+}
+
+.app__tools .col-md-4 {
+    height: 20px;
+    padding: 5px;
+    width: 20%;
+}
+
+.not-found-wrapper {
+    text-align: center;
+}
+/* settings page css styles end HERE */

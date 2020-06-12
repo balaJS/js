@@ -17,6 +17,7 @@ var APP = {
             static: [],
         },
     },
+    column_count: 5,
     search: {
         term: '',
         result: [],
@@ -154,6 +155,7 @@ var APP = {
 
                 $page_base_wrapper.find('.js-app__main').each(function(index, wrapper) {
                     let row_index = 1, elem_index = 0;
+                    let column_count = APP.column_count;
                     $wrapper = $(wrapper);
                     $wrapper.find('.js-row').remove();
 
@@ -165,17 +167,17 @@ var APP = {
                     }
 
                     APP.current.data[data_keys[index]].forEach(function(entry, sindex) {
-                        elem_index = (sindex + 1) % 4;
-                        if (!elem_index) elem_index = 4;
+                        elem_index = (sindex + 1) % column_count;
+                        if (!elem_index) elem_index = column_count;
 
-                        is_last_url_box = ((elem_index && elem_index % 4 === 0) || (elem_index < 4 && entry_count === (sindex + 1)));
+                        is_last_url_box = ((elem_index && elem_index % column_count === 0) || (elem_index < column_count && entry_count === (sindex + 1)));
 
-                        if ((sindex && sindex % 4 === 0)) row_index++;
+                        if ((sindex && sindex % column_count === 0)) row_index++;
 
                         if (APP.debug) console.log('elem_index, is_last_url_box, row_index', `${elem_index}, ${is_last_url_box}, ${row_index}`);
 
                         url_box += `
-                            <a href="${entry.url}" class="col-md-4 js-col-${row_index}-${elem_index} js-url_box" data-index="${entry.index}" target="_blank" title="${entry.title}">${entry.title}</a>
+                            <a href="${entry.url}" class="col-md-4 js-col-${row_index}-${elem_index} js-url_box" data-index="${sindex}" target="_blank" title="${entry.title}">${entry.title}</a>
                         `;
 
                         if (is_last_url_box) {
