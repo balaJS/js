@@ -1,6 +1,6 @@
 {
-    "name": "Url warehouse",
-    "version": "2.1",
+    "name": "Url bot",
+    "version": "1.0",
     "description": "It will create dynamic urls with your tool path along your current url in chrome tab and you can bookmark your external urls.",
     "manifest_version": 2,
     "permissions": [
