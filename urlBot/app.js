@@ -175,7 +175,7 @@ var APP = {
                         if (APP.debug) console.log('elem_index, is_last_url_box, row_index', `${elem_index}, ${is_last_url_box}, ${row_index}`);
 
                         url_box += `
-                            <a href="${entry.url}" class="col-md-4 js-col-${row_index}-${elem_index} js-url_box" target="_blank" title="${entry.title}">${entry.title}</a>
+                            <a href="${entry.url}" class="col-md-4 js-col-${row_index}-${elem_index} js-url_box" data-index="${entry.index}" target="_blank" title="${entry.title}">${entry.title}</a>
                         `;
 
                         if (is_last_url_box) {
@@ -236,6 +236,10 @@ var APP = {
                     return;
                 }
 
+                if (APP.elems.settings.$edit_wrapper.find('.error').length) {
+                    APP.elems.settings.$edit_wrapper.addClass('hidden').find('.error').remove();
+                }
+
                 $('.actioning.js-url_box', APP.elems.settings.$wrapper).removeClass('actioning');
 
                 $url_box.addClass('actioning');
@@ -252,6 +256,7 @@ var APP = {
                 APP.elems.settings.$edit_form.find('input:first').focus();
             },
             formBtnAction: function(evt) {
+                evt.preventDefault();
                 const $this = APP.events.common.get_this(evt);
                 const action = $this.attr('data-action') || '';
                 const event = $this.attr('data-event') || '';
@@ -265,6 +270,7 @@ var APP = {
                 }
             },
             formClose: function(evt) {
+                evt.preventDefault();
                 const $this = APP.events.common.get_this(evt);
                 const parent = $this.attr('data-parent');
                 if (!parent) return;
@@ -280,7 +286,7 @@ var APP = {
                     APP.current.task.data[field.name] = field.value;
                 });
                 APP.current.task.data['is_external'] = !!APP.current.task.data['url'].match(/^http|https/ig);
-                APP.current.task.data['index'] = ((parseInt(row_column[0]) - 1) * 4) + parseInt(row_column[1] - 1);
+                APP.current.task.data['index'] = parseInt($url_box.attr('data-index'));
                 APP.current.task.index = $url_box.attr('title');
 
                 APP.current.task.$form = APP.elems.settings.$edit_form;
@@ -322,13 +328,20 @@ var APP = {
         store: function() {
             const stored_data = APP.current.overall;
             const current_data =  APP.current.task.data;
+            let index = stored_data.length;
 
             if (current_data.length) {
-                current_data.forEach(function(data) {
+                current_data.forEach(function(data, i) {
+                    if (isNaN(data.index) || data.index !== i) {
+                        data.index = index + i;
+                    }
                     stored_data.push(data);
                 });
             } else if (Object.keys(current_data).length) {
                 // Single insert here.
+                if (isNaN(current_data.index)) {
+                    current_data.index = index;
+                }
                 stored_data.push(current_data);
             } else {
                 // Invalid case
@@ -444,6 +457,7 @@ var APP = {
             let title = APP.current.task.data.title;
             let new_data = APP.current.overall.filter(function(entry, i) {
                 if (entry.title === title) return;
+                entry.index = i;
                 return entry;
             });
             APP.current.overall = new_data;
@@ -489,7 +503,6 @@ var APP = {
                 });
             }
             current_task.is_continue = !current_task.errors.length;
-            delete APP.current.task.data.index;
         },
         fieldValueUniqueCheck: function(args) {
             let is_duplicate;
@@ -499,7 +512,7 @@ var APP = {
                     is_duplicate = false;
                 }
 
-                if (args.key !== 'is_external' && is_duplicate) {
+                if (args.key.match(/title|url/) && is_duplicate) {
                     APP.current.task.errors.push(args.key + ' already used. Try with another ' + args.key);
                     return false;
                 }
