@@ -5,7 +5,11 @@ var APP = {
         page: 'view',
         url_box: {},
         task: {
+            action: '',
             data: {},
+            $form: {},
+            errors: [],
+            is_continue: true,
         },
         overall: [],
         data: {
@@ -46,6 +50,7 @@ var APP = {
 
         const view = {};
         view.$wrapper = $('.js-app__view__wrapper', common.$app);
+        view.$url_box_wrapper = $('.js-app__main', view.$wrapper);
         this.elems.view = view;
 
         const settings = {};
@@ -55,6 +60,7 @@ var APP = {
 
         settings.$insert_form = $('.js-insert-form', settings.$tools_wrapper);
         settings.$export_form = $('.js-export-form', settings.$tools_wrapper);
+        settings.$bulk_insert_form = $('.js-bulkinsert-form', settings.$tools_wrapper);
 
         settings.$bulk_insert_wrapper = $('.js-bulk_insert-wrapper', settings.$tools_wrapper);
 
@@ -110,7 +116,6 @@ var APP = {
                 APP.current.page = navi_data.page;
 
                 APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
-
             },
             search: function() {
                 const $this = $(this);
@@ -130,7 +135,7 @@ var APP = {
                 if (!APP.elems.common.$not_found_wrapper.hasClass('hidden')) APP.elems.common.$not_found_wrapper.addClass('hidden');
 
                 $url_boxes.each(function(i, url_box) {
-                    if (!url_box.innerHTML.match(search_term)) {
+                    if (!url_box.innerHTML.match(new RegExp(search_term, 'gi'))) {
                         url_box.className += ' hidden';
                     }
                 });
@@ -180,11 +185,25 @@ var APP = {
                         }
                     });
                 });
+                this.show404Page();
             },
+            show404Page: function() {
+                if (!APP.current.overall.length) {
+                    APP.elems.common.$not_found_wrapper.removeClass('hidden');
+                } else {
+                    APP.elems.common.$not_found_wrapper.addClass('hidden');
+                }
+            }
         },
         view: {
-            urlBoxClick: function() {
+            urlBoxClick: function(evt) {
                 // TODO: Should be removed in future.
+                evt.preventDefault();
+                const $url_box = APP.events.common.get_this(evt);
+                const href = $url_box.attr('href');
+                let is_external = !!href.match(/^http|https/ig);
+                let new_url = is_external ? href : APP.current.url + '/' + href;
+                chrome.tabs.create({ url: new_url });
             },
         },
         settings: {
@@ -195,7 +214,7 @@ var APP = {
                 // TODO: Refactoring is needed here.
                 if ($tool.hasClass('actioning')) {
                     APP.elems.settings.$tools.removeClass('actioning');
-                    APP.elems.settings.$tool_form_wrappers.addClass('hidden');
+                    APP.elems.settings.$tool_form_wrappers.addClass('hidden').find('.error').remove();
                     return;
                 }
 
@@ -213,7 +232,7 @@ var APP = {
 
                 if ($url_box.hasClass('actioning')) {
                     $('.actioning.js-url_box', APP.elems.settings.$wrapper).removeClass('actioning');
-                    APP.elems.settings.$edit_wrapper.addClass('hidden');
+                    APP.elems.settings.$edit_wrapper.addClass('hidden').find('.error').remove();
                     return;
                 }
 
@@ -247,20 +266,32 @@ var APP = {
             },
             formClose: function(evt) {
                 const $this = APP.events.common.get_this(evt);
-                const parent = '.' + $this.attr('data-parent');
+                const parent = $this.attr('data-parent');
+                if (!parent) return;
+
                 const wrapper = $this.attr('data-wrapper') ? $this.attr('data-wrapper') : 'app';
-                $this.parents('.' + wrapper).find(parent).trigger('click');
+                $this.parents('.' + wrapper).find('.' + parent).trigger('click');
             },
             updateEvent: function() {
+                const $url_box = $('.actioning.js-url_box', APP.elems.settings.$wrapper);
+                let row_column = $url_box[0].classList[1].match(/\d/g);
                 APP.current.task.data = {};
                 APP.elems.settings.$edit_form.find('input').map(function(i, field) {
                     APP.current.task.data[field.name] = field.value;
                 });
                 APP.current.task.data['is_external'] = !!APP.current.task.data['url'].match(/^http|https/ig);
-                APP.current.task.index = $('.actioning.js-url_box', APP.elems.settings.$wrapper).attr('title');
+                APP.current.task.data['index'] = ((parseInt(row_column[0]) - 1) * 4) + parseInt(row_column[1] - 1);
+                APP.current.task.index = $url_box.attr('title');
 
-                APP.backend.update();
-                APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
+                APP.current.task.$form = APP.elems.settings.$edit_form;
+                APP.current.task.action = 'update';
+                APP.validation.fieldValueCheck();
+                APP.errorHandling();
+
+                if (APP.current.task.is_continue) {
+                    APP.backend.update();
+                    APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
+                }
             },
             removeEvent: function() {
                 let value = APP.elems.settings.$edit_form.find('input:first').val() || '';
@@ -281,6 +312,7 @@ var APP = {
         this.elems.settings.$tools_wrapper.find('.js-tool-export').on('click', this.backend.export);
 
         this.elems.settings.$url_box_wrapper.on('click', '.js-url_box', this.events.settings.urlBoxClick);
+        this.elems.view.$url_box_wrapper.on('click', '.js-url_box', this.events.view.urlBoxClick);
 
         // Default triggers.
         this.elems.common.$nav_btn.trigger('click');
@@ -325,17 +357,32 @@ var APP = {
             });
             APP.current.task.data['is_external'] = !!APP.current.task.data['url'].match(/^http|https/ig);
 
-            this.store();
-            this.pass();
+            APP.current.task.$form = APP.elems.settings.$insert_form;
+            APP.current.task.action = 'insert';
+            APP.validation.fieldValueCheck();
+            APP.errorHandling();
+
+            if (APP.current.task.is_continue) {
+                this.store();
+                this.pass();
+            }
         },
         bulkInsert: function() {
             const $wrapper = APP.elems.settings.$bulk_insert_wrapper;
             const $textarea = $wrapper.find('textarea');
 
             APP.current.task.data = {};
-            APP.current.task.data = JSON.parse($textarea.val());
-            this.store();
-            this.pass();
+            APP.current.task.data = APP.validation.validJsonReturn($textarea.val());
+
+            APP.current.task.$form = APP.elems.settings.$bulk_insert_form;
+            APP.validation.uniqueValueofBulkInsert();
+            APP.validation.fieldValueCheck();
+            APP.errorHandling();
+
+            if (APP.current.task.is_continue) {
+                this.store();
+                this.pass();
+            }
         },
         export: function() {
             APP.backend.fetch({raw_data: 1});
@@ -362,6 +409,7 @@ var APP = {
             localStorage.setItem('urls', JSON.stringify([]));
             APP.current.overall = APP.current.data.dynamic = APP.current.data.static = [];
             APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
+            APP.elems.common.$not_found_wrapper.removeClass('hidden');
             this.pass();
         },
 
@@ -374,9 +422,10 @@ var APP = {
 
             let key;
             APP.current.overall.forEach(function(entry) {
-                key = entry.is_external ? 'dynamic' : 'static';
+                key = entry.is_external ? 'static' : 'dynamic';
                 APP.current.data[key].push(entry);
             });
+            APP.events.common.show404Page();
         },
         update: function() {
             let title = APP.current.task.index;
@@ -400,18 +449,99 @@ var APP = {
             APP.current.overall = new_data;
 
             localStorage.setItem('urls', JSON.stringify(APP.current.overall));
-            this.generateViewData();
+            APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
 
             this.pass();
         },
 
         pass: function() {
             APP.current.task.pass = true;
+            APP.current.task.action = '';
         },
         fail: function(msg = '') {
             APP.current.task.pass = false;
             APP.current.task.msg = msg;
         },
+    },
+    validation: {
+        fieldValueCheck: function() {
+            const current_task = APP.current.task;
+            let exist_keys = [];
+
+            if (current_task.data.length) {
+                // Bulk insert. TODO: merge these to loop into one.
+                current_task.data.forEach(function(entry, i) {
+                    Object.keys(entry).forEach(function(key, i) {
+                        if (/^ *$/.test(entry[key]) && exist_keys.indexOf(key) === -1) {
+                            exist_keys.push(key);
+                            current_task.errors.push(key + ' must have a value.');
+                        }
+                        APP.validation.fieldValueUniqueCheck({'key': key, 'value': entry[key]});
+                    });
+                });
+            } else {
+                // Single insert.
+                Object.keys(current_task.data).forEach(function(key, i) {
+                    if (/^ *$/.test(current_task.data[key])) {
+                        current_task.errors.push(key + ' must have a value.');
+                    }
+                    APP.validation.fieldValueUniqueCheck({'key': key, 'value': current_task.data[key]});
+                });
+            }
+            current_task.is_continue = !current_task.errors.length;
+            delete APP.current.task.data.index;
+        },
+        fieldValueUniqueCheck: function(args) {
+            let is_duplicate;
+            APP.current.overall.forEach(function(entry, i) {
+                is_duplicate = (entry[args.key] === args.value);
+                if (APP.current.task.data.index === i) {
+                    is_duplicate = false;
+                }
+
+                if (args.key !== 'is_external' && is_duplicate) {
+                    APP.current.task.errors.push(args.key + ' already used. Try with another ' + args.key);
+                    return false;
+                }
+            });
+        },
+        uniqueValueofBulkInsert: function() {
+            let unique_values = {
+                titles: [],
+                urls: [],
+            };
+            APP.current.task.data.forEach(function(entry, i) {
+                if (unique_values.titles.indexOf(entry.title) === -1) {
+                    unique_values.titles.push(entry.title);
+                } else {
+                    APP.current.task.errors.push(entry.title + ' was already used. Title must be unique.');
+                }
+
+                if(unique_values.urls.indexOf(entry.url) === -1) {
+                    unique_values.urls.push(entry.url);
+                } else {
+                    APP.current.task.errors.push(entry.url + ' was already used. Url must be unique.');
+                }
+            });
+        },
+        validJsonReturn: function(str) {
+            let json_data = [];
+            try {
+                json_data = JSON.parse(str);
+            } catch {
+                APP.current.task.errors.push('Please enter valid JSON format string.');
+            }
+            return json_data;
+        },
+    },
+    errorHandling: function() {
+        const $form = APP.current.task.$form;
+        $form.find('.error').remove();
+
+        APP.current.task.errors.forEach(function(error) {
+            $form.append('<div class="error">' + error + '</div>');
+        });
+        APP.current.task.errors = [];
     },
 };
 
@@ -419,5 +549,9 @@ var APP = {
     $(function() {
         APP.elemInit();
         APP.eventInit();
+        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+            const url_obj = new URL(tabs[0].url);
+            APP.current.url = url_obj.origin;
+        });
     });
 })(APP, jQuery);
