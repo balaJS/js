@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>App - Url warhouse</title>
-<!-- https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js -->
+<title>URL BOT</title>
 <meta charset="UTF-8">
 <script src="jquery.min.js"></script>
 <script src="app.js"></script>
@@ -51,7 +50,6 @@
                         <form name="data_form" class="js-insert-form js-can-reset">
                             <input name="title" title="Title" placeholder="Title" />
                             <input name="url" title="URL" placeholder="URL" />
-                            <!-- <input name="is_external" title="External url" type="checkbox" /> -->
                         </form>
                     </div>
                     <div class="action__btn_wrapper js-action__btn_wrapper">
@@ -76,6 +74,11 @@
                     <div class="action__form">
                         <form name="data_form" class="js-export-form">
                             <textarea name="json_input" rows="7" cols="63" readonly></textarea>
+                            <select name="type" class="js-data-type">
+                                <option value="both">Both</option>
+                                <option value="static">Static</option>
+                                <option value="dynamic">Dynamic</option>
+                            </select>
                         </form>
                     </div>
                     <div class="action__btn_wrapper js-action__btn_wrapper">

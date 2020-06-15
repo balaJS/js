@@ -8,9 +8,12 @@ var APP = {
             action: '',
             data: {},
             $form: {},
+            $url_box: {},
             errors: [],
             is_continue: true,
+            storage: '',
         },
+        // TODO: Will remove overall array.
         overall: [],
         data: {
             dynamic: [],
@@ -31,22 +34,27 @@ var APP = {
         common.$search_box = $('.js-search_box', '.app__search__wrapper');
         common.$app_pages = $('.js-app__pages', common.$app);
         common.$close_btn = $('.js-form-close', common.$app);
+        common.$not_found_wrapper = $('.js-not-found-wrapper', common.$app);
 
-        // TODO: external and internal variation no need. Fix it later.
+        // TODO: this is new version.
+        common.static = {};
+        common.static.$wrapper = $('.external-url-wrapper', common.$app);
+        common.static.$url_headings = $('.js-url_heading', common.static.$wrapper);
+        common.rows = '.row';
+        common.url_boxes = '.js-url_box';
+
+        common.dynamic = {};
+        common.dynamic.$wrapper = $('.internal-url-wrapper', common.$app);
+        common.dynamic.$url_headings = $('.js-url_heading', common.dynamic.$wrapper);
+
+        // TODO: external and internal variation no need. Fix it later. It is deprecated now.
         common.$external_wrapper = $('.external-url-wrapper', common.$app);
         common.$external_rows = $('.js-row', common.$external_wrapper);
         common.$external_url_boxes = $('.js-url_box', common.$external_rows);
 
-        common.static = {};
-        common.static.$url_headings = $('.js-url_heading', common.$external_wrapper);
-
         common.$internal_wrapper = $('.internal-url-wrapper', common.$app);
         common.$internal_rows = $('.js-row', common.$internal_wrapper);
         common.$internal_url_boxes = $('.js-url_box', common.$internal_rows);
-
-        common.dynamic = {};
-        common.dynamic.$url_headings = $('.js-url_heading', common.$internal_wrapper);
-        common.$not_found_wrapper = $('.js-not-found-wrapper', common.$app);
         this.elems.common = common;
 
         const view = {};
@@ -61,6 +69,8 @@ var APP = {
 
         settings.$insert_form = $('.js-insert-form', settings.$tools_wrapper);
         settings.$export_form = $('.js-export-form', settings.$tools_wrapper);
+        settings.$export_type = $('.js-data-type', settings.$export_form);
+
         settings.$bulk_insert_form = $('.js-bulkinsert-form', settings.$tools_wrapper);
 
         settings.$bulk_insert_wrapper = $('.js-bulk_insert-wrapper', settings.$tools_wrapper);
@@ -105,7 +115,7 @@ var APP = {
                 const page_name = $nav_btn.attr('data-page') || 'view';
                 const navi_data = APP.page_data.navigation[page_name];
 
-                APP.elems.common.$search_box.val('');
+                APP.elems.common.$search_box.val('').focus();
 
                 $nav_btn.html(navi_data.icon).attr({
                     title: navi_data.title,
@@ -147,50 +157,51 @@ var APP = {
             urlBoxRender: function($page_base_wrapper) {
                 if (APP.debug) console.log($page_base_wrapper);
 
-                APP.backend.generateViewData();
-                const data_keys = Object.keys(APP.current.data);
+                APP.backend.fetch();
+                this.htmlRender('dynamic');
+                this.htmlRender('static');
 
-                var $wrapper = {}, url_box = '', divs = '';
-                var is_last_url_box = false, entry_count = 0;
-
-                $page_base_wrapper.find('.js-app__main').each(function(index, wrapper) {
-                    let row_index = 1, elem_index = 0;
-                    let column_count = APP.column_count;
-                    $wrapper = $(wrapper);
-                    $wrapper.find('.js-row').remove();
-
-                    entry_count = APP.current.data[data_keys[index]].length;
-                    if (entry_count) {
-                        APP.elems.common[data_keys[index]].$url_headings.removeClass('hidden');
-                    } else {
-                        APP.elems.common[data_keys[index]].$url_headings.addClass('hidden');
-                    }
-
-                    APP.current.data[data_keys[index]].forEach(function(entry, sindex) {
-                        elem_index = (sindex + 1) % column_count;
-                        if (!elem_index) elem_index = column_count;
-
-                        is_last_url_box = ((elem_index && elem_index % column_count === 0) || (elem_index < column_count && entry_count === (sindex + 1)));
-
-                        if ((sindex && sindex % column_count === 0)) row_index++;
-
-                        if (APP.debug) console.log('elem_index, is_last_url_box, row_index', `${elem_index}, ${is_last_url_box}, ${row_index}`);
-
-                        url_box += `
-                            <a href="${entry.url}" class="col-md-4 js-col-${row_index}-${elem_index} js-url_box" data-index="${sindex}" target="_blank" title="${entry.title}">${entry.title}</a>
-                        `;
-
-                        if (is_last_url_box) {
-                            divs = `<div class="row js-row row-${row_index}">${url_box}</div>`;
-                            $wrapper.append(divs);
-                            url_box = '';
-                        }
-                    });
-                });
                 this.show404Page();
             },
+            htmlRender: function(type) {
+                var page_data = APP.current.data[type];
+                const $html_group = APP.elems.common[type];
+                const $wrapper = $html_group.$wrapper;
+
+                var is_last_url_box = false, entry_count = page_data.length;
+                var url_box = '', divs = '';
+                let column_count = APP.column_count, elem_index = 0;
+
+                $wrapper.find(APP.elems.common.rows).remove();
+
+                if (entry_count) {
+                    $html_group.$url_headings.removeClass('hidden');
+                } else {
+                    $html_group.$url_headings.addClass('hidden');
+                }
+
+                page_data.forEach(function(entry, sindex) {
+                    if (!entry) return;
+                    elem_index = (sindex + 1) % column_count;
+                    if (!elem_index) elem_index = column_count;
+
+                    is_last_url_box = ((elem_index && elem_index % column_count === 0) || (elem_index < column_count && entry_count === (sindex + 1)));
+
+                    if (APP.debug) console.log('elem_index, is_last_url_box', `${elem_index}, ${is_last_url_box}`);
+
+                    url_box += `
+                        <a href="${entry.url}" class="col-md-4 js-url_box" data-index="${entry.index}" target="_blank" title="${entry.title}">${entry.title}</a>
+                    `;
+
+                    if (is_last_url_box) {
+                        divs = `<div class="row">${url_box}</div>`;
+                        $wrapper.append(divs);
+                        url_box = '';
+                    }
+                });
+            },
             show404Page: function() {
-                if (!APP.current.overall.length) {
+                if (!APP.current.data.dynamic.length && !APP.current.data.static.length) {
                     APP.elems.common.$not_found_wrapper.removeClass('hidden');
                 } else {
                     APP.elems.common.$not_found_wrapper.addClass('hidden');
@@ -231,6 +242,7 @@ var APP = {
                 evt.preventDefault();
                 let class_name = evt.target.classList[1];
                 const $url_box = APP.events.common.get_this(evt);
+                APP.current.task.$url_box = $url_box;
 
                 if ($url_box.hasClass('actioning')) {
                     $('.actioning.js-url_box', APP.elems.settings.$wrapper).removeClass('actioning');
@@ -278,18 +290,20 @@ var APP = {
                 if (!parent) return;
 
                 const wrapper = $this.attr('data-wrapper') ? $this.attr('data-wrapper') : 'app';
-                $this.parents('.' + wrapper).find('.' + parent).trigger('click');
+                $this.parents('.' + wrapper).find('.actioning.' + parent).trigger('click');
             },
             updateEvent: function() {
-                const $url_box = $('.actioning.js-url_box', APP.elems.settings.$wrapper);
-                let row_column = $url_box[0].classList[1].match(/\d/g);
-                APP.current.task.data = {};
+                const $url_box = APP.current.task.$url_box;
+                APP.current.task.data = [];
+                APP.current.task.storage = !!$url_box.attr('href').match(/^http|https/ig) ? 'static' : 'dynamic';
+
+                let data = {};
                 APP.elems.settings.$edit_form.find('input').map(function(i, field) {
-                    APP.current.task.data[field.name] = field.value;
+                    data[field.name] = field.value;
                 });
-                APP.current.task.data['is_external'] = !!APP.current.task.data['url'].match(/^http|https/ig);
-                APP.current.task.data['index'] = parseInt($url_box.attr('data-index'));
-                APP.current.task.index = $url_box.attr('title');
+                data['is_external'] = !!data['url'].match(/^http|https/ig);
+                data['index'] = parseInt($url_box.attr('data-index'));
+                APP.current.task.data.push(data);
 
                 APP.current.task.$form = APP.elems.settings.$edit_form;
                 APP.current.task.action = 'update';
@@ -302,8 +316,9 @@ var APP = {
                 }
             },
             removeEvent: function() {
-                let value = APP.elems.settings.$edit_form.find('input:first').val() || '';
-                APP.current.task.data = {title: value};
+                const $url_box = APP.current.task.$url_box;
+                APP.current.task.data.index = parseInt($url_box.attr('data-index'));
+                APP.current.task.data.is_external = !!$url_box.attr('href').match(/^http|https/ig);
 
                 APP.backend.remove();
                 $('.js-url_box.actioning', '.js-app__'+APP.current.page+'__wrapper').addClass('hidden');
@@ -322,29 +337,43 @@ var APP = {
         this.elems.settings.$url_box_wrapper.on('click', '.js-url_box', this.events.settings.urlBoxClick);
         this.elems.view.$url_box_wrapper.on('click', '.js-url_box', this.events.view.urlBoxClick);
 
+        this.elems.settings.$export_type.on('change', this.backend.export);
+
         // Default triggers.
         this.elems.common.$nav_btn.trigger('click');
-        if (!APP.current.overall.length) this.elems.common.$nav_btn.trigger('click');
+        if (!APP.elems.common.$not_found_wrapper.hasClass('hidden')) this.elems.common.$nav_btn.trigger('click');
     },
     backend: {
         store: function() {
-            const stored_data = APP.current.overall;
+            const stored_data = APP.current.data;
             const current_data =  APP.current.task.data;
-            let index = stored_data.length;
+            let dy_index = stored_data.dynamic.length;
+            let st_index = stored_data.static.length;
+            let storage;
 
             if (current_data.length) {
                 current_data.forEach(function(data, i) {
-                    if (isNaN(data.index) || data.index !== i) {
-                        data.index = index + i;
+                    if (data.is_external) {
+                        storage = stored_data.static;
+                        data.index = st_index + i;
+                    } else {
+                        storage = stored_data.dynamic;
+                        data.index = dy_index + i;
                     }
-                    stored_data.push(data);
+
+                    storage.push(data);
                 });
             } else if (Object.keys(current_data).length) {
                 // Single insert here.
-                if (isNaN(current_data.index)) {
-                    current_data.index = index;
+                // TODO: It is deprecated now.
+                if (current_data.is_external) {
+                    storage = stored_data.static;
+                    if (isNaN(current_data.index))  current_data.index = st_index + i;
+                } else {
+                    storage = stored_data.dynamic;
+                    if (isNaN(current_data.index))  current_data.index = dy_index + i;
                 }
-                stored_data.push(current_data);
+                storage.push(current_data);
             } else {
                 // Invalid case
                 // TODO: set proper error handler.
@@ -352,14 +381,24 @@ var APP = {
             }
             
             if (APP.debug) console.table('store', stored_data);
-            localStorage.setItem('urls', JSON.stringify(stored_data));
+            localStorage.setItem('dynamic', JSON.stringify(stored_data.dynamic));
+            localStorage.setItem('static', JSON.stringify(stored_data.static));
             this.fetch();
             APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
         },
         fetch: function(args = {}) {
-            APP.current.overall = JSON.parse(localStorage.getItem('urls')) || [];
+            var temp = {};
+            APP.current.data.dynamic = JSON.parse(localStorage.getItem('dynamic')) || [];
+            APP.current.data.static = JSON.parse(localStorage.getItem('static')) || [];
+
+            if (args.raw_data === 'both') {
+                temp = APP.current.data.static.concat(APP.current.data.dynamic);
+            } else if (args.raw_data === 'static' || args.raw_data === 'dynamic') {
+                temp = APP.current.data[args.raw_data];
+            }
+
             if (args.raw_data) {
-                APP.current.overall = !!localStorage.getItem('urls') ? localStorage.getItem('urls') : JSON.stringify([]);
+                APP.current.data[args.raw_data] = JSON.stringify(temp);
             }
         },
 
@@ -372,6 +411,7 @@ var APP = {
             });
             APP.current.task.data['is_external'] = !!APP.current.task.data['url'].match(/^http|https/ig);
 
+            APP.current.task.data = [APP.current.task.data];
             APP.current.task.$form = APP.elems.settings.$insert_form;
             APP.current.task.action = 'insert';
             APP.validation.fieldValueCheck();
@@ -390,7 +430,7 @@ var APP = {
             APP.current.task.data = APP.validation.validJsonReturn($textarea.val());
 
             APP.current.task.$form = APP.elems.settings.$bulk_insert_form;
-            APP.validation.uniqueValueofBulkInsert();
+
             APP.validation.fieldValueCheck();
             APP.errorHandling();
 
@@ -400,11 +440,14 @@ var APP = {
             }
         },
         export: function() {
-            APP.backend.fetch({raw_data: 1});
-            if (APP.debug) console.table('export', APP.current.overall);
+            let type = APP.elems.settings.$export_type.val();
+            APP.elems.settings.$export_type.prop('selectedIndex', 0);
+
+            APP.backend.fetch({raw_data: type});
+            if (APP.debug) console.table('export', APP.current.data[type]);
 
             const $export_form = APP.elems.settings.$export_form;
-            $export_form.find('textarea').val(APP.current.overall);
+            $export_form.find('textarea').val(APP.current.data[type]);
             let html_val = APP.page_data.settings.export.beforeAction;
             $export_form.parents('.js-export-wrapper').find('.js-form-action').html(html_val).attr('title', html_val);
 
@@ -421,50 +464,53 @@ var APP = {
             $export_form.parents('.js-export-wrapper').find('.js-form-action').html(html_val).attr('title', html_val);
         },
         reset: function() {
-            localStorage.setItem('urls', JSON.stringify([]));
-            APP.current.overall = APP.current.data.dynamic = APP.current.data.static = [];
+            localStorage.setItem('dynamic', JSON.stringify([]));
+            localStorage.setItem('static', JSON.stringify([]));
+            APP.current.data.dynamic = APP.current.data.static = [];
             APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
             APP.elems.common.$not_found_wrapper.removeClass('hidden');
             this.pass();
         },
-
-        generateViewData: function() {
-            // TODO: We should split the data based on dynamic urls.
-            this.fetch();
-            APP.current.data.dynamic = [];
-            APP.current.data.static = [];
-            if (APP.debug) console.log('overall data in generateViewData', APP.current.overall);
-
-            let key;
-            APP.current.overall.forEach(function(entry) {
-                key = entry.is_external ? 'static' : 'dynamic';
-                APP.current.data[key].push(entry);
-            });
-            APP.events.common.show404Page();
-        },
         update: function() {
-            let title = APP.current.task.index;
-            let new_data = APP.current.overall.map(function(entry, i) {
-                if (entry.title === title) entry = APP.current.task.data;
-                return entry;
-            });
-            APP.current.overall = new_data;
+            const data = APP.current.task.data[0];
+            let index = data.index;
+            let storage_key = data.is_external ? 'static' : 'dynamic';
+            let storage = APP.current.data[storage_key];
+            let isInsert = false;
+            let prevouis_storage_key = APP.current.task.storage;
+            let prevouis_storage = APP.current.data[prevouis_storage_key];
 
-            localStorage.setItem('urls', JSON.stringify(APP.current.overall));
-            this.generateViewData();
+            if (prevouis_storage_key !== storage_key) {
+                isInsert = true;
+                storage.push(data);
+                localStorage.setItem(storage_key, JSON.stringify(storage));
+                storage_key = prevouis_storage_key;
+                storage = prevouis_storage;
+            }
+
+            let new_data = [];
+            storage.forEach(function(entry, i) {
+                if (entry.index === index) entry = data;
+                if (isInsert && entry.index === index) return;
+                new_data.push(entry);
+            });
+
+            storage = new_data;
+            localStorage.setItem(storage_key, JSON.stringify(storage));
 
             this.pass();
         },
         remove: function() {
-            let title = APP.current.task.data.title;
-            let new_data = APP.current.overall.filter(function(entry, i) {
-                if (entry.title === title) return;
-                entry.index = i;
+            let index = APP.current.task.data.index;
+            let storage_key = APP.current.task.data.is_external ? 'static' : 'dynamic';
+            let storage = APP.current.data[storage_key];
+            let new_data = storage.filter(function(entry, i) {
+                if (entry.index === index) return;
                 return entry;
             });
-            APP.current.overall = new_data;
+            storage = new_data;
 
-            localStorage.setItem('urls', JSON.stringify(APP.current.overall));
+            localStorage.setItem(storage_key, JSON.stringify(storage));
             APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
 
             this.pass();
@@ -484,60 +530,15 @@ var APP = {
             const current_task = APP.current.task;
             let exist_keys = [];
 
-            if (current_task.data.length) {
-                // Bulk insert. TODO: merge these to loop into one.
-                current_task.data.forEach(function(entry, i) {
-                    Object.keys(entry).forEach(function(key, i) {
-                        if (/^ *$/.test(entry[key]) && exist_keys.indexOf(key) === -1) {
-                            exist_keys.push(key);
-                            current_task.errors.push(key + ' must have a value.');
-                        }
-                        APP.validation.fieldValueUniqueCheck({'key': key, 'value': entry[key]});
-                    });
-                });
-            } else {
-                // Single insert.
-                Object.keys(current_task.data).forEach(function(key, i) {
-                    if (/^ *$/.test(current_task.data[key])) {
+            current_task.data.forEach(function(entry, i) {
+                Object.keys(entry).forEach(function(key, i) {
+                    if (/^ *$/.test(entry[key]) && exist_keys.indexOf(key) === -1) {
+                        exist_keys.push(key);
                         current_task.errors.push(key + ' must have a value.');
                     }
-                    APP.validation.fieldValueUniqueCheck({'key': key, 'value': current_task.data[key]});
                 });
-            }
+            });
             current_task.is_continue = !current_task.errors.length;
-        },
-        fieldValueUniqueCheck: function(args) {
-            let is_duplicate;
-            APP.current.overall.forEach(function(entry, i) {
-                is_duplicate = (entry[args.key] === args.value);
-                if (APP.current.task.data.index === i) {
-                    is_duplicate = false;
-                }
-
-                if (args.key.match(/title|url/) && is_duplicate) {
-                    APP.current.task.errors.push(args.key + ' already used. Try with another ' + args.key);
-                    return false;
-                }
-            });
-        },
-        uniqueValueofBulkInsert: function() {
-            let unique_values = {
-                titles: [],
-                urls: [],
-            };
-            APP.current.task.data.forEach(function(entry, i) {
-                if (unique_values.titles.indexOf(entry.title) === -1) {
-                    unique_values.titles.push(entry.title);
-                } else {
-                    APP.current.task.errors.push(entry.title + ' was already used. Title must be unique.');
-                }
-
-                if(unique_values.urls.indexOf(entry.url) === -1) {
-                    unique_values.urls.push(entry.url);
-                } else {
-                    APP.current.task.errors.push(entry.url + ' was already used. Url must be unique.');
-                }
-            });
         },
         validJsonReturn: function(str) {
             let json_data = [];
