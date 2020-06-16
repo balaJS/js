@@ -13,8 +13,6 @@ var APP = {
             is_continue: true,
             storage: '',
         },
-        // TODO: Will remove overall array.
-        overall: [],
         data: {
             dynamic: [],
             static: [],
@@ -216,7 +214,7 @@ var APP = {
                 const href = $url_box.attr('href');
                 let is_external = !!href.match(/^http|https/ig);
                 let new_url = is_external ? href : APP.current.url + '/' + href;
-                chrome.tabs.create({ url: new_url });
+                browser.tabs.create({ url: new_url });
             },
         },
         settings: {
@@ -452,7 +450,7 @@ var APP = {
             $export_form.parents('.js-export-wrapper').find('.js-form-action').html(html_val).attr('title', html_val);
 
             // TODO: Try to avoid this method call.
-            // To restore the data type of APP.current.overall, Here it triggered.
+            // To restore the js obj, Here it triggered.
             APP.backend.fetch();
         },
         copy: function() {
@@ -565,7 +563,7 @@ var APP = {
     $(function() {
         APP.elemInit();
         APP.eventInit();
-        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        browser.tabs.query({currentWindow: true, active: true}, function(tabs) {
             const url_obj = new URL(tabs[0].url);
             APP.current.url = url_obj.origin;
         });
