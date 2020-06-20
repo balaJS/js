@@ -1,7 +1,9 @@
 var APP = {
     debug: false,
     current: {
-        url: '',
+        url: null,
+        url_path: null,
+        tab_title: null,
         page: 'view',
         url_box: {},
         task: {
@@ -13,6 +15,8 @@ var APP = {
             is_continue: true,
             storage: '',
         },
+        // TODO: Will remove overall array.
+        overall: [],
         data: {
             dynamic: [],
             static: [],
@@ -29,10 +33,15 @@ var APP = {
         common.$app = $('.app');
         common.$top_wrapper = $('.app__top', common.$app);
         common.$nav_btn = $('.js-nav-action', common.$top_wrapper);
+        common.nav_btn_cls = '.js-nav-action';
         common.$search_box = $('.js-search_box', '.app__search__wrapper');
         common.$app_pages = $('.js-app__pages', common.$app);
-        common.$close_btn = $('.js-form-close', common.$app);
+        common.close_btn_cls = '.js-form-close';
         common.$not_found_wrapper = $('.js-not-found-wrapper', common.$app);
+
+        common.$nav_help_link = $('.js-nav-help-action', common.$top_wrapper);
+        common.$help_wrapper = $('.js-help-content-wrapper', common.$app);
+        common.$help_links = $('.js-help-link-title', common.$help_wrapper);
 
         // TODO: this is new version.
         common.static = {};
@@ -66,6 +75,7 @@ var APP = {
         settings.$tools = $('span', settings.$tools_wrapper);
 
         settings.$insert_form = $('.js-insert-form', settings.$tools_wrapper);
+        settings.$url_fill_checkbox = $('.js-fill_url_path', settings.$insert_form);
         settings.$export_form = $('.js-export-form', settings.$tools_wrapper);
         settings.$export_type = $('.js-data-type', settings.$export_form);
 
@@ -77,7 +87,7 @@ var APP = {
         settings.$tool_form_wrappers = $('.js-form-wrapper', settings.$tools_wrapper);
         settings.$edit_wrapper = $('.js-edit-wrapper', common.$app);
         settings.$edit_form = $('.js-edit-form', settings.$edit_wrapper);
-        settings.$action_btns = $('.js-form-action', '.js-action__btn_wrapper');
+        settings.action_btns_cls = '.js-form-action';
 
         settings.$url_box_wrapper = $('.js-app__main', settings.$wrapper);
         settings.$url_boxes = $('.js-url_box', settings.$url_box_wrapper);
@@ -124,7 +134,14 @@ var APP = {
                 APP.elems[navi_data.page].$wrapper.removeClass('hidden');
                 APP.current.page = navi_data.page;
 
-                APP.events.common.urlBoxRender($('.js-app__'+APP.current.page+'__wrapper'));
+                const $current_page = $('.js-app__'+APP.current.page+'__wrapper');
+
+                APP.events.common.urlBoxRender($current_page);
+
+                $current_page.removeClass('macro-wrapper');
+                if (APP.elems.common.$app.hasClass('helper-show')) {
+                    $current_page.addClass('macro-wrapper');
+                }
             },
             search: function() {
                 const $this = $(this);
@@ -204,7 +221,16 @@ var APP = {
                 } else {
                     APP.elems.common.$not_found_wrapper.addClass('hidden');
                 }
-            }
+            },
+            helpWrapperToggle: function() {
+                APP.elems.common.$app.toggleClass('helper-show');
+                APP.elems.common.$help_wrapper.toggleClass('hidden');
+                $('.js-app__'+APP.current.page+'__wrapper').toggleClass('macro-wrapper');
+            },
+            helpLinkToggle: function() {
+                const $this = $(this);
+                $this.siblings('.js-help-link-content').toggleClass('hidden');
+            },
         },
         view: {
             urlBoxClick: function(evt) {
@@ -242,6 +268,14 @@ var APP = {
                 const $url_box = APP.events.common.get_this(evt);
                 APP.current.task.$url_box = $url_box;
 
+                if (evt.ctrlKey) {
+                    const href = $url_box.attr('href');
+                    let is_external = !!href.match(/^http|https/ig);
+                    let new_url = is_external ? href : APP.current.url + '/' + href;
+                    browser.tabs.create({ url: new_url });
+                    return;
+                }
+
                 if ($url_box.hasClass('actioning')) {
                     $('.actioning.js-url_box', APP.elems.settings.$wrapper).removeClass('actioning');
                     APP.elems.settings.$edit_wrapper.addClass('hidden').find('.error').remove();
@@ -263,7 +297,7 @@ var APP = {
                     $input.val(data[i]);
                 });
 
-                APP.elems.settings.$edit_wrapper.find('.js-form-close').attr('data-parent', class_name);
+                APP.elems.settings.$edit_wrapper.find(APP.elems.common.close_btn_cls).attr('data-parent', class_name);
                 APP.elems.settings.$edit_wrapper.removeClass('hidden').detach().appendTo($url_box.parent());
                 APP.elems.settings.$edit_form.find('input:first').focus();
             },
@@ -278,7 +312,7 @@ var APP = {
 
                 if (APP.current.task.pass) {
                     APP.current.task.pass = false;
-                    $this.siblings('.js-form-close').trigger('click');
+                    $this.siblings(APP.elems.common.close_btn_cls).trigger('click');
                 }
             },
             formClose: function(evt) {
@@ -321,21 +355,44 @@ var APP = {
                 APP.backend.remove();
                 $('.js-url_box.actioning', '.js-app__'+APP.current.page+'__wrapper').addClass('hidden');
             },
+            fillUrlPathToInput: function() {
+                const $this = $(this);
+                const $title_input = APP.elems.settings.$insert_form.find('[name="title"]');
+                const $url_input = APP.elems.settings.$insert_form.find('[name="url"]');
+                if ($this.prop('checked')) {
+                    $title_input.val(APP.current.tab_title).focus();
+                    $url_input.val(APP.current.url_path);
+                    return;
+                }
+
+                APP.events.settings.clearUrlPathFromInput($this);
+            },
+            clearUrlPathFromInput: function($this) {
+                const $title_input = APP.elems.settings.$insert_form.find('[name="title"]');
+                const $url_input = APP.elems.settings.$insert_form.find('[name="url"]');
+                $url_input.val('');
+                $title_input.val('');
+            },
         },
     },
     eventInit: function() {
-        this.elems.common.$top_wrapper.on('click', this.elems.common.$nav_btn, this.events.common.navigation);
+        this.elems.common.$top_wrapper.on('click', this.elems.common.nav_btn_cls, this.events.common.navigation);
         this.elems.common.$search_box.on('keyup', this.events.common.search);
-        this.elems.settings.$wrapper.on('click', this.elems.common.$close_btn, this.events.settings.formClose);
+        this.elems.settings.$wrapper.on('click', this.elems.common.close_btn_cls, this.events.settings.formClose);
 
-        this.elems.settings.$wrapper.on('click', this.elems.settings.$action_btns, this.events.settings.formBtnAction);
+        this.elems.settings.$wrapper.on('click', this.elems.settings.action_btns_cls, this.events.settings.formBtnAction);
         this.elems.settings.$tools.on('click', this.events.settings.toolsAction);
         this.elems.settings.$tools_wrapper.find('.js-tool-export').on('click', this.backend.export);
 
         this.elems.settings.$url_box_wrapper.on('click', '.js-url_box', this.events.settings.urlBoxClick);
         this.elems.view.$url_box_wrapper.on('click', '.js-url_box', this.events.view.urlBoxClick);
 
+        this.elems.settings.$url_fill_checkbox.on('change', this.events.settings.fillUrlPathToInput);
         this.elems.settings.$export_type.on('change', this.backend.export);
+
+        // help wrapper events here
+        this.elems.common.$nav_help_link.on('click', this.events.common.helpWrapperToggle);
+        this.elems.common.$help_links.on('click', this.events.common.helpLinkToggle);
 
         // Default triggers.
         this.elems.common.$nav_btn.trigger('click');
@@ -439,7 +496,6 @@ var APP = {
         },
         export: function() {
             let type = APP.elems.settings.$export_type.val();
-            APP.elems.settings.$export_type.prop('selectedIndex', 0);
 
             APP.backend.fetch({raw_data: type});
             if (APP.debug) console.table('export', APP.current.data[type]);
@@ -450,7 +506,7 @@ var APP = {
             $export_form.parents('.js-export-wrapper').find('.js-form-action').html(html_val).attr('title', html_val);
 
             // TODO: Try to avoid this method call.
-            // To restore the js obj, Here it triggered.
+            // To restore the data type of APP.current.overall, Here it triggered.
             APP.backend.fetch();
         },
         copy: function() {
@@ -559,6 +615,7 @@ var APP = {
     },
 };
 
+var browser = browser || {};
 (function(APP, $) {
     $(function() {
         APP.elemInit();
@@ -566,6 +623,8 @@ var APP = {
         browser.tabs.query({currentWindow: true, active: true}, function(tabs) {
             const url_obj = new URL(tabs[0].url);
             APP.current.url = url_obj.origin;
+            APP.current.url_path = url_obj.pathname.substr(1) + url_obj.search;
+            APP.current.tab_title = tabs[0].title;
         });
     });
 })(APP, jQuery);

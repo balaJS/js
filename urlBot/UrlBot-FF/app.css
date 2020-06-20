@@ -13,9 +13,14 @@
 
 .app {
     width: 550px;
+    min-height: 250px;
     padding: 15px;
     background-color: whitesmoke;
     border-radius: 10px;
+}
+
+.app.helper-show {
+    width: 650px;
 }
 
 .container {
@@ -37,23 +42,43 @@
     white-space: nowrap;
     overflow-x: hidden;
     border-radius: 5px;
-    background-color: antiquewhite;
+    background-color: darkgray;
     color: #252222;
 }
 
+.col-md-3 {
+    width: 35%;
+}
+
+.col-md-8 {
+    width: 74%;
+}
+
 .col-md-4:hover {
-    background-color: #d8c9b6;
+    background-color: lightgrey;
+}
+
+.macro-wrapper {
+    width: 60%;
+    float: right;
+}
+
+.help-content-wrapper {
+    position: absolute;
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: overlay;
 }
 
 .action-row, .form-wrapper, .edit-wrapper {
     padding: 5px;
-    background-color: antiquewhite;
+    background-color: lightgray;
     margin-top: -4px;
 }
 
 .actioning {
     border-bottom: 0px;
-    background-color: antiquewhite;
+    background-color: lightgray;
 }
 
 .app__search__wrapper {
@@ -73,8 +98,33 @@
     border-radius: 5px;
 }
 
-.nav-action:hover {
+.nav-help-wrapper {
+    position: absolute;
+    left: 60px;
+}
+
+.nav-help-action {
+    padding: 5px;
+    position: relative;
+    top: 10px;
+    border-radius: 5px;
+}
+
+.nav-action:hover, .nav-help-action:hover {
     background-color: white;
+}
+
+.help-content {
+    width: 90%;
+    height: auto;
+    background-color: white;
+    padding: 2px 2px 9px;
+    border: 1px solid gainsboro;
+    word-break: break-all;
+}
+
+.help-content .help-link-title {
+    cursor: pointer;
 }
 
 /* Common css styles end HERE */
@@ -116,6 +166,8 @@
 }
 
 .not-found-wrapper {
+    float: left;
+    padding-bottom: 10px;
     text-align: center;
 }
 /* settings page css styles end HERE */
