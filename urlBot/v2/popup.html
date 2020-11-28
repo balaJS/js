@@ -3,9 +3,6 @@
 <head>
 <title>URL BOT</title>
 <meta charset="UTF-8">
-<!-- jQuery Library v3.4.1 -->
-<script src="jquery.min.js"></script>
-<script src="app.js"></script>
 <link rel="stylesheet" href="app.css" />
 </head>
 <body id="app" class="app">
@@ -14,7 +11,7 @@
             <a href="javascript:void();" class="nav-help-action js-nav-help-action"title="FAQ">FAQ❓</a>
         </div>
         <div class="settings_wrapper inline-block">
-            <a href="javascript:void();" class="nav-action js-nav-action" data-page="settings" title="Goto Settings">⚙️</a>
+            <a href="javascript:void();" class="nav-action js-nav-action" data-page="settings" data-nextpage="settings" title="Goto Settings">⚙️</a>
         </div>
     </div>
     <div class="app__search__wrapper">
@@ -27,7 +24,7 @@
         <div class="app__main js-app__main container internal-url-wrapper">
             <div class="url_heading js-url_heading hidden">Dynamic URLS</div>
         </div>
-    
+
         <div class="app__main js-app__main container external-url-wrapper">
             <div class="url_heading js-url_heading hidden">Static(External) URLS</div>
         </div>
@@ -111,7 +108,7 @@
         <div class="app__main js-app__main container internal-url-wrapper">
             <div class="url_heading js-url_heading hidden">Dynamic URLS</div>
         </div>
-    
+
         <div class="app__main js-app__main container external-url-wrapper">
             <div class="url_heading js-url_heading hidden">Static(External) URLS</div>
         </div>
@@ -196,5 +193,8 @@
             </div>
         </div>
     </div>
+    <!-- jQuery Library v3.4.1 -->
+    <!-- <script src="jquery.min.js"></script> -->
+    <script src="app2.js"></script>
 </body>
 </html>
