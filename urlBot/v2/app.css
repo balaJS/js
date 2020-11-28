@@ -1,0 +1,177 @@
+/* Common css styles started HERE */
+input[type="text"] {
+    width: 48%;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.error {
+    color: red;
+}
+
+.app {
+    width: 550px;
+    min-height: 250px;
+    padding: 15px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.app.helper-show {
+    width: 650px;
+}
+
+.container {
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    padding: 15px 0 0;
+}
+
+.col-md-4 {
+    width: 18%;
+    display: inline-block;
+    text-align: center;
+    border: 2px solid darkgrey;
+    height: 30px;
+    padding: 5px 0 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    border-radius: 5px;
+    background-color: darkgray;
+    color: #252222;
+}
+
+.col-md-3 {
+    width: 35%;
+}
+
+.col-md-8 {
+    width: 74%;
+}
+
+.col-md-4:hover {
+    background-color: lightgrey;
+}
+
+.macro-wrapper {
+    width: 60%;
+    float: right;
+}
+
+.help-content-wrapper {
+    position: absolute;
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: overlay;
+}
+
+.action-row, .form-wrapper, .edit-wrapper {
+    padding: 5px;
+    background-color: lightgray;
+    margin-top: -4px;
+}
+
+.actioning {
+    border-bottom: 0px;
+    background-color: lightgray;
+}
+
+.app__search__wrapper {
+    background-color: lightgray;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.search_box, .search_box:hover {
+    border-radius: 12px;
+}
+
+.nav-action {
+    padding: 5px;
+    position: relative;
+    top: 10px;
+    border-radius: 5px;
+}
+
+.nav-help-wrapper {
+    position: absolute;
+    left: 60px;
+}
+
+.nav-help-action {
+    padding: 5px;
+    position: relative;
+    top: 10px;
+    border-radius: 5px;
+}
+
+.nav-action:hover, .nav-help-action:hover {
+    background-color: white;
+}
+
+.help-content {
+    width: 90%;
+    height: auto;
+    background-color: white;
+    padding: 2px 2px 9px;
+    border: 1px solid gainsboro;
+    word-break: break-all;
+}
+
+.help-content .help-link-title {
+    cursor: pointer;
+}
+
+/* Common css styles end HERE */
+
+/* view page css styles start HERE */
+.settings_wrapper {
+    position: absolute;
+    right: 60px;
+}
+
+.empty_search_box {
+    width: 35%;
+    visibility: hidden;
+}
+
+.url_heading {
+    text-align: center;
+    padding: 10px 0 0;
+    font-weight: bold;
+}
+/* view page css styles end HERE */
+
+/* settings page css styles start HERE */
+.form-wrapper > div, .edit-wrapper > div {
+    padding: 5px 0 0;
+}
+
+.action__btn_wrapper .btns {
+    padding: 5px;
+    width: 20%;
+    overflow-y: hidden;
+    height: 15px;
+}
+
+.app__tools .col-md-4 {
+    height: 20px;
+    padding: 5px;
+    width: 20%;
+}
+
+.not-found-wrapper {
+    float: left;
+    padding-bottom: 10px;
+    text-align: center;
+}
+/* settings page css styles end HERE */

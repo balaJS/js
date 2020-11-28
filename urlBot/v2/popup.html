@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>URL BOT</title>
+<meta charset="UTF-8">
+<!-- jQuery Library v3.4.1 -->
+<script src="jquery.min.js"></script>
+<script src="app.js"></script>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body id="app" class="app">
+    <div class="app__top">
+        <div class="nav-help-wrapper inline-block">
+            <a href="javascript:void();" class="nav-help-action js-nav-help-action"title="FAQ">FAQ❓</a>
+        </div>
+        <div class="settings_wrapper inline-block">
+            <a href="javascript:void();" class="nav-action js-nav-action" data-page="settings" title="Goto Settings">⚙️</a>
+        </div>
+    </div>
+    <div class="app__search__wrapper">
+        <div class="empty_search_box inline-block">X</div>
+        <div class="search_box inline-block">
+            <input name="search_box" class="search_box js-search_box" placeholder="  Search url title"/>
+        </div>
+    </div>
+    <div class="app__view__wrapper js-app__pages js-app__view__wrapper">
+        <div class="app__main js-app__main container internal-url-wrapper">
+            <div class="url_heading js-url_heading hidden">Dynamic URLS</div>
+        </div>
+    
+        <div class="app__main js-app__main container external-url-wrapper">
+            <div class="url_heading js-url_heading hidden">Static(External) URLS</div>
+        </div>
+    </div>
+
+    <div class="app__settings__wrapper js-app__pages js-app__settings__wrapper hidden">
+        <div class="app__tools js-app__tools row">
+            <a href="#">
+                <span class="col-md-4 js-tool-insert" data-form="js-add-wrapper" title="Insert">Insert</span>
+            </a>
+            <a href="#">
+                <span class="col-md-4 js-tool-bulkinsert" data-form="js-bulk_insert-wrapper" title="Bulk insert">Bulk insert</span>
+            </a>
+            <a href="#">
+                <span class="col-md-4 js-tool-export" data-form="js-export-wrapper" title="Export">Export</span>
+            </a>
+            <a href="#">
+                <span class="col-md-4 js-tool-reset" data-form="js-reset-wrapper" title="Reset">Reset</span>
+            </a>
+
+            <div class="app__tools__form_wrapper js-tools__form_wrapper">
+                <div class="row js-add-wrapper form-wrapper js-form-wrapper hidden">
+                    <div class="action__form">
+                        <form name="data_form" class="js-insert-form js-can-reset">
+                            <input type="text" name="title" title="Title" placeholder="Title" />
+                            <input type="text" name="url" title="URL" placeholder="URL" />
+                            <br>
+                            <label><input type="checkbox" name="fill_url_path" class="js-fill_url_path" data-is_static="1" />Are you want to fill <b>Static urlpath</b> from current tab?</label>
+                            <br>
+                            <label><input type="checkbox" name="fill_url_path" class="js-fill_url_path" data-is_static="" />Are you want to fill <b>Dynamic url</b> from current tab?</label>
+                        </form>
+                    </div>
+                    <div class="action__btn_wrapper js-action__btn_wrapper">
+                        <a href="#" class="btns col-md-4 js-form-action" data-action="insert" title="Add">Add</a>
+                        <a href="#" class="btns col-md-4 js-form-close" data-parent="js-tool-insert" title="Close">Close</a>
+                    </div>
+                </div>
+
+                <div class="row js-bulk_insert-wrapper form-wrapper js-form-wrapper hidden">
+                    <div class="action__form">
+                        <form name="data_form" class="js-bulkinsert-form js-can-reset">
+                            <textarea name="json_input" rows="7" cols="63"></textarea>
+                        </form>
+                    </div>
+                    <div class="action__btn_wrapper js-action__btn_wrapper">
+                        <a href="#" class="btns col-md-4 js-form-action" data-action="bulkInsert" title="Insert">Insert</a>
+                        <a href="#" class="btns col-md-4 js-form-close" data-parent="js-tool-bulkinsert" title="Close">Close</a>
+                    </div>
+                </div>
+
+                <div class="row js-export-wrapper form-wrapper js-form-wrapper hidden">
+                    <div class="action__form">
+                        <form name="data_form" class="js-export-form">
+                            <textarea name="json_input" rows="7" cols="63" readonly></textarea>
+                            <select name="type" class="js-data-type">
+                                <option value="both">Both</option>
+                                <option value="static">Static</option>
+                                <option value="dynamic">Dynamic</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="action__btn_wrapper js-action__btn_wrapper">
+                        <a href="#" class="btns col-md-4 js-form-action" data-action="copy" title="Copy">Copy</a>
+                        <a href="#" class="btns col-md-4 js-form-close" data-parent="js-tool-export" title="Close">Close</a>
+                    </div>
+                </div>
+
+                <div class="row js-reset-wrapper form-wrapper js-form-wrapper hidden">
+                    <div class="action__form">
+                        <form name="data_form">
+                            Are you sure to reset the data?
+                        </form>
+                    </div>
+                    <div class="action__btn_wrapper js-action__btn_wrapper">
+                        <a href="#" class="btns col-md-4 js-form-action" data-action="reset" title="Done">Done</a>
+                        <a href="#" class="btns col-md-4 js-form-close" data-parent="js-tool-reset" title="Cancel">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="app__main js-app__main container internal-url-wrapper">
+            <div class="url_heading js-url_heading hidden">Dynamic URLS</div>
+        </div>
+    
+        <div class="app__main js-app__main container external-url-wrapper">
+            <div class="url_heading js-url_heading hidden">Static(External) URLS</div>
+        </div>
+
+        <div class="row edit-wrapper js-edit-wrapper hidden" data-action="add" data-position="">
+            <div class="action__form">
+                <form name="data_form" class="js-edit-form">
+                    <input type="text" name="title" title="Title" placeholder="Title" />
+                    <input type="text" name="url" title="URL" placeholder="URL" />
+                </form>
+            </div>
+            <div class="action__btn_wrapper js-action__btn_wrapper">
+                <a href="#" class="btns col-md-4 js-form-action" data-event="updateEvent" title="Update">Update</a>
+                <a href="#" class="btns col-md-4 js-form-action" data-event="removeEvent" title="Delete">Delete</a>
+                <a href="#" class="btns col-md-4 js-form-close" data-parent="close" data-wrapper="js-app__main" title="Close">Close</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row not-found-wrapper js-not-found-wrapper hidden">
+        No records found.
+    </div>
+
+    <div class="col-md-3 inline-block help-content-wrapper js-help-content-wrapper hidden">
+        <h3>FAQ❓</h3>
+        <div class="help-content js-help-content">
+            <b class="help-link-title js-help-link-title">What is Static url?</b>
+            <div class="js-help-link-content help-link-content hidden">
+                External site urls are called as static urls.
+                <br>
+                Ex: https://stockoverflow.com
+            </div>
+        </div>
+        <div class="help-content js-help-content">
+            <b class="help-link-title js-help-link-title">What is Dynamic url?</b>
+            <div class="js-help-link-content help-link-content hidden">
+                Dynamic url contains just a url path.
+                <br>
+                It will combine with your current domain, when you click the urlbox.
+                <br>
+                Ex: path=tools/test/order/1 or tools/test/order.php, While click that box, you are in https://stockoverflow.com site, then new tab be like, https://stockoverflow.com/tools/test/order.php
+            </div>
+        </div>
+        <div class="help-content js-help-content">
+            <b class="help-link-title js-help-link-title">What are these icons(⚙️, ⇉)?</b>
+            <div class="js-help-link-content help-link-content hidden">
+                These icons(⚙️, ⇉) are navigation icons.
+                <br>
+                It helps to you navigate one page from another page.
+                <br>
+                This icon (⚙️) navigate to settings page, This icon (⇉) navigate to view page.
+            </div>
+        </div>
+        <div class="help-content js-help-content">
+            <b class="help-link-title js-help-link-title">How to open the urls?</b>
+            <div class="js-help-link-content help-link-content hidden">
+                <b>View page:</b> Just click the square box, which you want to open.
+                <br>
+                <b>Settings page:</b> Just press CTRL and click the square box, which you want to open.
+            </div>
+        </div>
+        <div class="help-content js-help-content">
+            <b class="help-link-title js-help-link-title">How can I add Static & Dynamic urls?</b>
+            <div class="js-help-link-content help-link-content hidden">
+                Go to settings page.(click this ⚙️)
+                <br>
+                Click insert tool and fill the title and url or url path of your tool.
+                <br>
+                <b>If url in url box start with http or https, then it will save as a External url. Other wise it will save as a Static url. </b>
+                <br>
+                Click add button. Now you can see your title in below box.
+            </div>
+        </div>
+        <div class="help-content js-help-content">
+            <b class="help-link-title js-help-link-title">How can I export and bulk insert the data?</b>
+            <div class="js-help-link-content help-link-content hidden">
+                <b>Bulk insert:</b> It must be a valid JSON string. you can find the syntax of that JSON string from export tool.
+                <br>
+                <b>Export:</b> You can share your collection with your friends, so they don't need to feed everyting again.
+                <br>
+                so they get data from you and can bulk insert the data. so you can save their day.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
