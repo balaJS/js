@@ -48,6 +48,7 @@ input[type="text"] {
     border-radius: 5px;
     background-color: darkgray;
     color: #252222;
+    margin-right: 5px;
 }
 
 .col-md-3 {
