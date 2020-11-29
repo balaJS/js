@@ -1,6 +1,6 @@
 {
     "name": "URL BOT",
-    "version": "2.22",
+    "version": "2.25",
     "description": "It will create dynamic urls with your tool path along your current url in browser tab and you can bookmark your external urls.",
     "manifest_version": 2,
     "permissions": [
