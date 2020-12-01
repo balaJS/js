@@ -2,7 +2,6 @@ var APP = {
   debug: false,
   settings: {
     page: 'view',
-    url_box: {},
     column_count: 5,
   },
   data: {
@@ -31,9 +30,7 @@ var APP = {
   },
   frondend: {
     search: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
-      const $$ = self.helpers.$$;
+      const self = APP, $ = self.helpers.$, $$ = self.helpers.$$;
       const $searchBox = self.helpers.get_this(evt);
       var searchTerm = $searchBox.value;
 
@@ -73,7 +70,6 @@ var APP = {
       if (!internalSearchResult.length && !externalSearchResult.length) {
         $not_found_wrapper.classList.remove('hidden');
       }
-
     },
     searchBoxClear: function() {
       var self = APP;
@@ -82,9 +78,7 @@ var APP = {
       $searchBox.focus();
     },
     toolsAction: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
-      const $$ = self.helpers.$$;
+      const self = APP, $ = self.helpers.$, $$ = self.helpers.$$;
 
       const $tool = self.helpers.get_this(evt);
       const $tools = $('.js-app__tools span');
@@ -109,15 +103,13 @@ var APP = {
     },
     formClose: function(evt) {
       evt.preventDefault();
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
 
       const $this = self.helpers.get_this(evt);
       $('.' + $this.dataset.parent).click();
     },
     insertSubmit: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
       const $this = self.helpers.get_this(evt);
       const $insert_form = $('.js-insert-form');
 
@@ -136,8 +128,7 @@ var APP = {
       $('.' + $this.dataset.parent).click();
     },
     insertFillUrlPathToInput: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
       const $this = self.helpers.get_this(evt);
       var $form, $title, $url, url, checked = $this.checked;
 
@@ -155,8 +146,7 @@ var APP = {
       }
     },
     resetForm: function($form) {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
       $form.querySelectorAll('input').forEach(function($input) {
         $input.type === 'text' ? $input.value = '' : $input.checked = 0;
       });
@@ -165,8 +155,7 @@ var APP = {
       }
     },
     bulkInsertSubmit: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
       const $this = self.helpers.get_this(evt);
       var $form = $('.js-bulkinsert-form');
       const $textarea = $form.querySelector('textarea');
@@ -178,8 +167,7 @@ var APP = {
       $('.' + $this.dataset.parent).click();
     },
     exportData: function() {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
 
       const $form = $('.js-export-form');
       const $selectBox = $form.querySelector('.js-export-trigger');
@@ -198,8 +186,7 @@ var APP = {
       $copy.setAttribute('title', html_val);
     },
     copy: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
       const $this = self.helpers.get_this(evt);
 
       const $form = $('.js-export-form');
@@ -213,8 +200,7 @@ var APP = {
         $this.setAttribute('title', html_val);
     },
     reset: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
+      const self = APP, $ = self.helpers.$;
       const $this = self.helpers.get_this(evt);
       const $selectBox = $('.js-reset-form .js-reset-type');
 
@@ -238,13 +224,11 @@ var APP = {
 
       var new_url = $this.getAttribute('href');
       if (!new_url.match(/^http|https/ig)) { new_url = self.browser.url + '/' + new_url; }
-      browser.tabs.create({ url: new_url });
+      self.browser.self.tabs.create({ url: new_url });
     },
     urlBoxClick: function(evt) {
         evt.preventDefault();
-        const self = APP;
-        const $ = self.helpers.$;
-        const $$ = self.helpers.$$;
+        const self = APP, $ = self.helpers.$, $$ = self.helpers.$$;
         const $this = self.helpers.get_this(evt);
 
         if (evt.ctrlKey || !$this.classList.contains('js-no-redirect')) {
@@ -273,9 +257,7 @@ var APP = {
         $title.focus();
     },
     placeEditWrapper: function($target) {
-      const self = APP;
-      const $ = self.helpers.$;
-      const $$ = self.helpers.$$;
+      const self = APP, $ = self.helpers.$, $$ = self.helpers.$$;
 
       $$('.js-clone-edit-wrapper', 'nodeChange', {'method': 'remove'});
       const $original = $('.js-original-edit-wrapper');
@@ -295,9 +277,7 @@ var APP = {
       $target.append($clone);
     },
     update: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
-      const $$ = self.helpers.$$;
+      const self = APP, $ = self.helpers.$, $$ = self.helpers.$$;
       const $this = self.helpers.get_this(evt);
       const $urlBox = $('.actioning.js-url_box');
       const $edit_form = $('.js-clone-edit-wrapper .js-edit-form');
@@ -317,9 +297,7 @@ var APP = {
       self.htmlRender('settings', type);
     },
     remove: function(evt) {
-      const self = APP;
-      const $ = self.helpers.$;
-      const $$ = self.helpers.$$;
+      const self = APP, $ = self.helpers.$, $$ = self.helpers.$$;
       const $this = self.helpers.get_this(evt);
       const $urlBox = $('.actioning.js-url_box');
 
@@ -348,32 +326,29 @@ var APP = {
     self: function() { return APP; },
     store: function(current_data) {
       this.fetch();
-      const self = this.self();
-        const stored_data = self.data;
-        var dy_index = stored_data.internal.length;
-        var st_index = stored_data.external.length;
-        var type;
+      const self = this.self(), stored_data = self.data;
+      var type, inIndex = stored_data.internal.length;
+      var exIndex = stored_data.external.length;
 
-        // insert && bulk insert actions done here.
-        current_data.forEach(function(data, i) {
-          if (data.is_external) {
-              data.index = st_index++;
-              stored_data.external.push(data);
-          } else {
-              data.index = dy_index++;
-              stored_data.internal.push(data);
-          }
-        });
+      // insert && bulk insert actions done here.
+      current_data.forEach(function(data, i) {
+        if (data.is_external) {
+            data.index = exIndex++;
+            stored_data.external.push(data);
+        } else {
+            data.index = inIndex++;
+            stored_data.internal.push(data);
+        }
+      });
 
-        if (APP.debug) console.table('store', stored_data);
-        localStorage.setItem('internal', JSON.stringify(stored_data.internal));
-        localStorage.setItem('external', JSON.stringify(stored_data.external));
-        this.fetch();
+      if (APP.debug) { console.table('store', stored_data); }
+      localStorage.setItem('internal', JSON.stringify(stored_data.internal));
+      localStorage.setItem('external', JSON.stringify(stored_data.external));
+      this.fetch();
     },
     fetch: function(args = {}) {
-      var temp = {};
       const self = this.self();
-      var internal = JSON.parse(localStorage.getItem('internal')) || [];
+      var temp = {}, internal = JSON.parse(localStorage.getItem('internal')) || [];
       var external = JSON.parse(localStorage.getItem('external')) || [];
 
       if (args.format === 'json') {
@@ -502,9 +477,7 @@ var APP = {
     this.helpers.toggle404Page();
   },
   htmlRender: function(pageName, type) {
-    const self = this;
-    const $ = this.helpers.$;
-    const $$ = this.helpers.$$;
+    const self = this, $ = this.helpers.$, $$ = this.helpers.$$;
     var data = this.data[type];
     var entry_count = data.length;
     var $page = this.helpers.getPage(pageName);
@@ -559,9 +532,7 @@ var APP = {
     this.$app = document.getElementById('app');
   },
   eventsInit: function() {
-    const self = this;
-    const $ = this.helpers.$;
-    const $$ = this.helpers.$$;
+    const self = this, $ = this.helpers.$, $$ = this.helpers.$$;
 
     $('.js-nav-action').addEventListener('click', self.pageNavigation.bind('', self));
     $('.js-nav-action').click();
@@ -589,13 +560,14 @@ var APP = {
     $('.js-action-reset').addEventListener('click', self.frondend.reset);
   },
   browser: {
+    self: chrome || {},
     url: '',
     url_path: '',
     full_url: '',
     tab_title: '',
     tabs: '',
     init: function() {
-        browser.tabs.query({currentWindow: true, active: true}, function(tabs) {
+        this.self.tabs.query({currentWindow: true, active: true}, function(tabs) {
           APP.browser.tabs = tabs;
           APP.browser.set_tab_details();
         });
@@ -612,5 +584,4 @@ var APP = {
   },
 };
 
-var browser = chrome || {};
 APP.init();
