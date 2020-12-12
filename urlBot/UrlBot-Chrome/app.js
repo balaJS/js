@@ -3,6 +3,7 @@ var APP = {
     current: {
         url: null,
         url_path: null,
+        full_url: null,
         tab_title: null,
         page: 'view',
         url_box: {},
@@ -357,17 +358,23 @@ var APP = {
             },
             fillUrlPathToInput: function() {
                 const $this = $(this);
+                $('.js-fill_url_path.active', APP.elems.settings.$insert_form).prop('checked', false).removeClass('active');
+
                 const $title_input = APP.elems.settings.$insert_form.find('[name="title"]');
                 const $url_input = APP.elems.settings.$insert_form.find('[name="url"]');
+                let url_value = $this.attr('data-is_static') ? APP.current.url_path : APP.current.full_url;
                 if ($this.prop('checked')) {
+                    $this.addClass('active');
                     $title_input.val(APP.current.tab_title).focus();
-                    $url_input.val(APP.current.url_path);
+                    $url_input.val(url_value);
                     return;
                 }
 
                 APP.events.settings.clearUrlPathFromInput($this);
             },
             clearUrlPathFromInput: function($this) {
+                $this.prop('checked', false).removeClass('active');
+
                 const $title_input = APP.elems.settings.$insert_form.find('[name="title"]');
                 const $url_input = APP.elems.settings.$insert_form.find('[name="url"]');
                 $url_input.val('');
@@ -613,6 +620,27 @@ var APP = {
         });
         APP.current.task.errors = [];
     },
+    browser: {
+        tabs: {},
+        set_current_tab: function() {
+            browser.tabs.query({currentWindow: true, active: true}, function(tabs) {
+                APP.browser.tabs = tabs;
+                APP.browser.set_tab_details();
+            });
+        },
+        set_tab_details: function() {
+            const tabs = APP.browser.tabs;
+
+            const url_obj = new URL(tabs[0].url);
+            APP.current.url = url_obj.origin;
+            APP.current.url_path = url_obj.pathname.substr(1) + url_obj.search;
+            APP.current.full_url = APP.current.url + '/' + APP.current.url_path;
+            APP.current.tab_title = tabs[0].title;
+        },
+        init: function() {
+            this.set_current_tab();
+        },
+    },
 };
 
 var browser = chrome || {};
@@ -620,11 +648,6 @@ var browser = chrome || {};
     $(function() {
         APP.elemInit();
         APP.eventInit();
-        browser.tabs.query({currentWindow: true, active: true}, function(tabs) {
-            const url_obj = new URL(tabs[0].url);
-            APP.current.url = url_obj.origin;
-            APP.current.url_path = url_obj.pathname.substr(1) + url_obj.search;
-            APP.current.tab_title = tabs[0].title;
-        });
+        APP.browser.init();
     });
 })(APP, jQuery);

@@ -1,4 +1,8 @@
 /* Common css styles started HERE */
+input[type="text"] {
+    width: 48%;
+}
+
 .inline-block {
     display: inline-block;
 }

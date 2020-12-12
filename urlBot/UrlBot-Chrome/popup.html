@@ -52,10 +52,12 @@
                 <div class="row js-add-wrapper form-wrapper js-form-wrapper hidden">
                     <div class="action__form">
                         <form name="data_form" class="js-insert-form js-can-reset">
-                            <input name="title" title="Title" placeholder="Title" />
-                            <input name="url" title="URL" placeholder="URL" />
+                            <input type="text" name="title" title="Title" placeholder="Title" />
+                            <input type="text" name="url" title="URL" placeholder="URL" />
                             <br>
-                            <label><input type="checkbox" name="fill_url_path" class="js-fill_url_path" />Are you want to fill title and url path from current tab?</label>
+                            <label><input type="checkbox" name="fill_url_path" class="js-fill_url_path" data-is_static="1" />Are you want to fill <b>Static urlpath</b> from current tab?</label>
+                            <br>
+                            <label><input type="checkbox" name="fill_url_path" class="js-fill_url_path" data-is_static="" />Are you want to fill <b>Dynamic url</b> from current tab?</label>
                         </form>
                     </div>
                     <div class="action__btn_wrapper js-action__btn_wrapper">
@@ -117,8 +119,8 @@
         <div class="row edit-wrapper js-edit-wrapper hidden" data-action="add" data-position="">
             <div class="action__form">
                 <form name="data_form" class="js-edit-form">
-                    <input name="title" title="Title" placeholder="Title" />
-                    <input name="url" title="URL" placeholder="URL" />
+                    <input type="text" name="title" title="Title" placeholder="Title" />
+                    <input type="text" name="url" title="URL" placeholder="URL" />
                 </form>
             </div>
             <div class="action__btn_wrapper js-action__btn_wrapper">
@@ -135,12 +137,6 @@
 
     <div class="col-md-3 inline-block help-content-wrapper js-help-content-wrapper hidden">
         <h3>FAQ❓</h3>
-        <div class="help-content js-help-content">
-            <b class="help-link-title js-help-link-title">When you can't open this extension?</b>
-            <div class="js-help-link-content help-link-content hidden">
-                When you didn't load the url in current tab, you can't open this extension instead you will see another browser settings popup.
-            </div>
-        </div>
         <div class="help-content js-help-content">
             <b class="help-link-title js-help-link-title">What is Static url?</b>
             <div class="js-help-link-content help-link-content hidden">
