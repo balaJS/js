@@ -1,0 +1,87 @@
+.hotel_wrapper {
+  border: 2px solid black;
+  margin: 20px 0 0;
+  width: 97%;
+}
+
+.kitchen_wrapper {
+  width: 300px;
+  height: 300px;
+  border: 5px solid red;
+}
+
+.cash_counter_wrapper {
+  width: 50px;
+  height: 50px;
+  border: 2px solid grey;
+  position: absolute;
+  right: 34px;
+}
+
+.door {
+  border: 3px solid green;
+  width: 15px;
+  height: 50px;
+  position: relative;
+}
+
+.kitchen_wrapper .exit_door {
+  top: 75%;
+  left: 98.5%;
+}
+
+.hotel_wrapper > .exit_door1 {
+  position: absolute;
+  top: 21%;
+  right: 12px;
+}
+
+.hotel_wrapper > .exit_door2 {
+  position: absolute;
+  top: 36%;
+  right: 12px;
+}
+
+.dinning_table {
+  width: 80px;
+  height: 60px;
+  border: 2px solid brown;
+  position: absolute;
+}
+
+.table1 {
+  top: 45px;
+  right: 210px;
+}
+
+.table2 {
+  top: 45px;
+  right: 80px;
+}
+
+.table3 {
+  top: 235px;
+  right: 210px;
+}
+
+.table4 {
+  top: 235px;
+  right: 80px;
+}
+
+.signal_wrapper {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 143px;
+  right: 157px;
+}
+
+.main_runway {
+  width: 170px;
+  height: 50px;
+  border: 2px solid blue;
+  position: absolute;
+  right: 0;
+  border-left: 0px;
+}

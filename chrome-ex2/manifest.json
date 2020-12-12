@@ -1,0 +1,45 @@
+{
+    "description": "You can check html and css attributes of selected elements vis this extension.",
+    "manifest_version": 2,
+    "name": "DEV tools plugin",
+    "version": "2",
+    "homepage_url": "https://github.com/balaJS/js",
+    "icons": {
+        "48": "includes/img/icon.png"
+    },
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [{
+        "matches": [
+            "http://*/*",
+            "https://*/*"
+        ],
+        "js": [
+            "includes/js/jquery.min.js",
+            "includes/js/popper.min.js",
+            "includes/js/bootstrap.min.js",
+            "includes/js/jquery-ui.js",
+            "const.js",
+            "extension.js"
+        ],
+        "css": [
+            "includes/css/bootstrap.min.css",
+            "includes/css/app.css"
+        ],
+        "run_at" :"document_end"
+    }],
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "contextMenus",
+        "storage",
+        "<all_urls>"    
+    ],
+    "browser_action": {
+        "default_icon": "includes/img/icon.png",
+        "default_title": "DEV TOOL",
+        "default_popup": "app.html"
+    }
+}

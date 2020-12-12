@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>JS Music Player</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="assets/js/player.js" charset="utf-8"></script>
+  <script src="assets/js/app.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<div class="container">
+  <h1 class="text-center">Page Title</h1>
+  <div class="row">
+    <div class="col-md-12">
+      <h3 class="text-center">Music player</h3>
+      <div class="player js-player">
+        <div class="row">
+          <div class="col-md-3 pre-track">
+            <button type="button" name="button" class="btn btn-light">
+              <i class="fa fa-arrow-left"></i>
+              (Thendral Vanthu)
+            </button>
+          </div>
+          <div class="col-md-6 current-track">
+            <audio controls class="normal-player" download>
+              <source src="file:///home/bala/Music/Fav/Thendral-Vanthu.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+            </audio>
+          </div>
+          <div class="col-md-3 next-track">
+            <button type="button" name="button" class="btn btn-light">
+              (Thendral Vanthu)
+              <i class="fa fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>All songs list</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+    <div class="col-sm-4">
+      <h3>All playlist</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+    <div class="col-sm-4">
+      <h3>Settings</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

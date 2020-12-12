@@ -1,0 +1,16 @@
+body {
+  background-color: #e9ecef;
+  padding: 50px 0;
+}
+
+.normal-player {
+  min-width: 100%;
+}
+
+.player {
+  min-width: 100%;
+}
+
+.pre-track button, .next-track button {
+  min-width: 100%;
+}
